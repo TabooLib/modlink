@@ -65,7 +65,7 @@ class Modlink(val plugin: Plugin) : PacketHandler(), PluginMessageListener, List
     }
 
     private fun sendPluginMessage(player: Player, bytes: ByteArray) {
-        player.sendPluginMessage(plugin, "modlink:out", bytes);
+        player.sendPluginMessage(plugin, "modlink:default", bytes);
     }
 
     @EventHandler

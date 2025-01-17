@@ -1,6 +1,6 @@
 # Modlink
 
-在 Bukkit 和 Fabric/Forge 之间进行数据传输。
+在 Bukkit 和 Fabric/Forge 之间进行更简单的数据传输，且允许数据包大小超过 Minecraft 规定的 1 MB。
 
 ## 基本
 
@@ -57,7 +57,7 @@ val modlink = Modlink()
 // 注册数据包通道
 // 由于 Fabric 的通讯写法在不同版本可能存在差异，因此需要手动注册
 val channel = Identifier("modlink", "default")
-ServerPlayNetworking.registerGlobalReceiver(channel) { _, _, _, buf, _ ->
+ClientPlayNetworking.registerGlobalReceiver(channel) { _, _, buf, _ ->
     modlink.handleMessageReceived(buf.array())
 }
 ```
