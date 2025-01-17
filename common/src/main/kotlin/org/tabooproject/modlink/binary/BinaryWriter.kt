@@ -52,12 +52,48 @@ class BinaryWriter {
     }
 
     /**
+     * 写入一个长整数
+     *
+     * @param value 要写入的长整数值。
+     */
+    fun writeLong(value: Long) {
+        output.writeLong(value)
+    }
+
+    /**
+     * 写入一个浮点数。
+     *
+     * @param value 要写入的浮点数值。
+     */
+    fun writeFloat(value: Float) {
+        output.writeFloat(value)
+    }
+
+    /**
+     * 写入一个浮点数（双精度）。
+     *
+     * @param value 要写入的浮点数值。
+     */
+    fun writeDouble(value: Double) {
+        output.writeDouble(value)
+    }
+
+    /**
      * 写入一个布尔值。
      *
      * @param value 要写入的布尔值。
      */
     fun writeBoolean(value: Boolean) {
         output.writeBoolean(value)
+    }
+
+    /**
+     * 写入一个字符
+     *
+     * @param value 要写入的字符
+     */
+    fun writeChar(value: Char) {
+        output.writeChar(value.code)
     }
 
     /**
