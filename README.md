@@ -31,7 +31,7 @@ modlink.codecRegistry.registerDecoder(0) {
 创建 Modlink 实例（使用 TabooLib 环境）:
 
 ```kotlin
-val modlink = Modlink(bukkitPlugin)
+val modlink by lazy { Modlink(bukkitPlugin) }
 ```
 
 发送数据包：
