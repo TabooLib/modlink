@@ -29,9 +29,10 @@ sealed class Packet(val packetId: Int) : BinarySerializable {
         const val SIGNATURE = 1122
 
         /**
-         * 默认分片大小（512 KB）
+         * 默认分片大小（32000 字节，即 32 KB）
+         * 他妈的核心都支持 1MB，你 Bukkit 还限制 32766？
          */
-        var defaultChunkSize = 1024 * 512
+        var defaultChunkSize = 32000
 
         /**
          * 创建分片数据包

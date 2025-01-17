@@ -25,8 +25,8 @@ class Modlink(val plugin: Plugin) : PacketHandler(), PluginMessageListener, List
 
     init {
         Bukkit.getServer().pluginManager.registerEvents(this, plugin)
-        Bukkit.getServer().messenger.registerOutgoingPluginChannel(plugin, "modlink:default")
-        Bukkit.getServer().messenger.registerIncomingPluginChannel(plugin, "modlink:default", this)
+        Bukkit.getServer().messenger.registerOutgoingPluginChannel(plugin, channelId)
+        Bukkit.getServer().messenger.registerIncomingPluginChannel(plugin, channelId, this)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, Runnable {
             assemblerMap.forEach { it.value.cleanup() }
         }, 100, 100)
@@ -65,11 +65,16 @@ class Modlink(val plugin: Plugin) : PacketHandler(), PluginMessageListener, List
     }
 
     private fun sendPluginMessage(player: Player, bytes: ByteArray) {
-        player.sendPluginMessage(plugin, "modlink:default", bytes);
+        player.sendPluginMessage(plugin, channelId, bytes);
     }
 
     @EventHandler
     private fun onQuit(e: PlayerQuitEvent) {
         assemblerMap.remove(e.player.uniqueId.toString())
+    }
+
+    companion object {
+
+        var channelId = "modlink:default"
     }
 }
