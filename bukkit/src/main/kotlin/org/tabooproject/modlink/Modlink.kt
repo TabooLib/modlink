@@ -46,21 +46,12 @@ class Modlink(val plugin: Plugin) : PacketHandler(), PluginMessageListener, List
 
     /**
      * 添加数据包接收监听器
-     *
-     * @param listener 监听器函数
-     */
-    fun onReceive(listener: (player: Player, packet: ModLinkPacket) -> Unit) {
-        receiveCallback += listener
-    }
-
-    /**
-     * 添加数据包接收监听器
      * 只接收指定类型的数据包
      *
      * @param listener 监听器函数
      */
     inline fun <reified T : ModLinkPacket> onReceive(crossinline listener: (player: Player, packet: T) -> Unit) {
-        onReceive { player, packet -> if (packet is T) listener(player, packet) }
+        receiveCallback += { player, packet -> if (packet is T) listener(player, packet) }
     }
 
     /**

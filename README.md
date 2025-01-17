@@ -21,8 +21,8 @@ data class MyPacket(val who: Int, val data: String) : ModLinkPacket(0) {
 ```kotlin
 val modlink: Modlink = ...
 
-modlink.codecRegistry.registerDecoder(0) { reader ->
-    MyPacket(reader.readInt(), reader.readString())
+modlink.codecRegistry.registerDecoder(0) {
+    MyPacket(readInt(), readString())
 }
 ```
 
@@ -68,12 +68,11 @@ ServerPlayNetworking.registerGlobalReceiver(channel) { _, _, _, buf, _ ->
 modlink.sendPacket(MyPacket(1, "Hello, World!")) { bytes ->
     // 为什么会设计成这种形式？
     // 如果数据包的大小超过 512 KB，则会被分片发送
-    ServerPlayNetworking.send(player, channel, bytes)
+    ClientPlayNetworking.send(channel, PacketByteBuf(Unpooled.wrappedBuffer(bytes)))
 }
 ```
 
 接收数据包：
-
 ```kotlin
 modlink.onReceive<MyPacket> { packet ->
     println("Received packet: $packet")

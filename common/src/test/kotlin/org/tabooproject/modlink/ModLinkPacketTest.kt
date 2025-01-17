@@ -20,18 +20,4 @@ class ModLinkPacketTest {
         val packet = PacketKeepAlive.from(reader)
         assertEquals("我是傻逼", packet.name)
     }
-
-    data class PacketKeepAlive(val name: String) : ModLinkPacket(0) {
-
-        override fun writeTo(writer: BinaryWriter) {
-            writer.writeString(name)
-        }
-
-        companion object {
-
-            fun from(reader: BinaryReader): PacketKeepAlive {
-                return PacketKeepAlive(reader.readString())
-            }
-        }
-    }
 }

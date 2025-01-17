@@ -24,21 +24,12 @@ class Modlink : PacketHandler() {
 
     /**
      * 添加数据包接收监听器
-     *
-     * @param listener 监听器函数
-     */
-    fun onReceive(listener: (packet: ModLinkPacket) -> Unit) {
-        receiveCallback += listener
-    }
-
-    /**
-     * 添加数据包接收监听器
      * 只接收指定类型的数据包
      *
      * @param listener 监听器函数
      */
     inline fun <reified T : ModLinkPacket> onReceive(crossinline listener: (packet: T) -> Unit) {
-        onReceive { packet -> if (packet is T) listener(packet) }
+        receiveCallback += { packet -> if (packet is T) listener(packet) }
     }
 
     fun handleMessageReceived(bytes: ByteArray) {
@@ -50,10 +41,5 @@ class Modlink : PacketHandler() {
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
-    }
-
-    companion object {
-
-        const val CHANNEL = "modlink:default"
     }
 }
