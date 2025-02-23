@@ -26,7 +26,7 @@ modlink.codecRegistry.registerDecoder(0) {
 }
 ```
 
-## Bukkit
+### Bukkit
 
 创建 Modlink 实例（使用 TabooLib 环境）:
 
@@ -48,7 +48,7 @@ modlink.onReceive<MyPacket> { player, packet ->
 }
 ```
 
-## Fabric
+### Fabric
 
 创建 Modlink 实例（使用 Fabric 1.20.4 环境）:
 
@@ -79,6 +79,44 @@ modlink.onReceive<MyPacket> { packet ->
 }
 ``` 
 
-## Forge
+### Forge
 
 和 Fabric 一样，需要手动实现发送和接受函数。
+
+## 注意事项
+
+在 Channel 没有注册前是不能发包给玩家的，通常表现在 Join 事件前后发包无效。下面是一个简单的解决办法：
+
+```kotlin
+private val modlink by lazy { Modlink(bukkitPlugin) }
+private val packetBuffer = ConcurrentHashMap<String, MutableList<ModLinkPacket>>()
+
+/**
+ * 向指定玩家发送 ModLink 数据包
+ *
+ * @param player 目标玩家
+ * @param packet 要发送的数据包
+ */
+fun sendPacket(player: Player, packet: ModLinkPacket) {
+    // 玩家是否已注册通道
+    if (player.hasMeta("modlink")) {
+        modlink.sendPacket(player, packet)
+    } else {
+        packetBuffer.getOrPut(player.name) { mutableListOf() } += packet
+    }
+}
+
+@SubscribeEvent
+private fun onJoin(e: PlayerJoinEvent) {
+    e.player.removeMeta("modlink")
+}
+
+@SubscribeEvent
+private fun onChannel(e: PlayerRegisterChannelEvent) {
+    if (e.channel == Modlink.channelId) {
+        e.player.setMeta("modlink", true)
+        // 发送缓存中的数据包
+        packetBuffer.remove(e.player.name)?.forEach { modlink.sendPacket(e.player, it) }
+    }
+}
+```
