@@ -81,7 +81,61 @@ modlink.onReceive<MyPacket> { packet ->
 
 ### Forge
 
-和 Fabric 一样，需要手动实现发送和接受函数。
+对于1.12.2-1.13+ 请参考[海螺的博客](https://izzel.io/2017/08/28/minecraft-plugin-message/)
+
+对于1.16.5-1.20.1（其他版本未测试），一种方法是使用Mixin手动接管数据包处理
+
+下面以1.20.1 Forge 47.4.3 为例
+#### Mixin
+```java
+@Mixin({ClientPacketListener.class})
+public class ClientPacketListenerMixin {
+    @Inject(
+            method = {"handleCustomPayload"},
+            at = {@At("HEAD")},
+            cancellable = true
+    )
+    public void onCustomPayload(ClientboundCustomPayloadPacket packet, CallbackInfo callbackInfo) {
+        if (packet.getIdentifier().equals(ResourceLocation.tryBuild("modlink", "default"))) {
+            CustomPacketEvent event = new CustomPacketEvent(packet.getData());
+            MinecraftForge.EVENT_BUS.post(event);
+            callbackInfo.cancel();
+        }
+    }
+}
+```
+#### Forge端
+创建事件类
+```kotlin
+class CustomPacketEvent(val buf: FriendlyByteBuf): Event()
+```
+之后实现收发信逻辑
+```kotlin
+    // 此事件需要在Forge的EVENT_BUS上注册
+    fun oCustomPacketReceive(event: CustomPacketEvent) {
+        Minecraft.getInstance().execute {
+            val buf = event.buf
+            val readableBytes = buf.readableBytes()
+            if (readableBytes <= 0) {
+                return@execute
+            }
+            val data = ByteArray(readableBytes)
+            buf.readBytes(data)
+            modlink.handleMessageReceived(data)
+        }
+    }
+
+    fun sendToServer(packet: ModLinkPacket) {
+        modlink.sendPacket(packet) { bytes ->
+            Minecraft.getInstance().connection?.send(
+                ServerboundCustomPayloadPacket(
+                    channelName,
+                    FriendlyByteBuf(Unpooled.wrappedBuffer(bytes))
+                )
+            )
+        }
+    }
+```
 
 ## 注意事项
 
