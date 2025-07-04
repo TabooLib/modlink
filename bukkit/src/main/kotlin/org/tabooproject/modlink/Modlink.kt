@@ -10,7 +10,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.plusAssign
 
-class Modlink(val plugin: Plugin) : PacketHandler(), PluginMessageListener, Listener {
+class Modlink(val plugin: Plugin, val channelId: String = "modlink:default") : PacketHandler(), PluginMessageListener, Listener {
 
     /** 数据包重组器，用于处理分片数据包的重组 */
     val assemblerMap = ConcurrentHashMap<String, PacketAssembler>()
@@ -71,10 +71,5 @@ class Modlink(val plugin: Plugin) : PacketHandler(), PluginMessageListener, List
     @EventHandler
     private fun onQuit(e: PlayerQuitEvent) {
         assemblerMap.remove(e.player.uniqueId.toString())
-    }
-
-    companion object {
-
-        var channelId = "modlink:default"
     }
 }
