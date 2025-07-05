@@ -83,7 +83,7 @@ modlink.onReceive<MyPacket> { packet ->
 
 对于1.12.2-1.13+ 请参考[海螺的博客](https://izzel.io/2017/08/28/minecraft-plugin-message/)
 
-对于1.16.5-1.20.1（其他版本未测试），一种方法是使用Mixin手动接管数据包处理
+对于1.16.5-1.20.1，一种方法是使用Mixin手动接管数据包处理
 
 下面以1.20.1 Forge 47.4.3 为例
 #### Mixin
@@ -112,7 +112,7 @@ class CustomPacketEvent(val buf: FriendlyByteBuf): Event()
 之后实现收发信逻辑
 ```kotlin
     // 此事件需要在Forge的EVENT_BUS上注册
-    fun oCustomPacketReceive(event: CustomPacketEvent) {
+    fun onCustomPacketReceive(event: CustomPacketEvent) {
         Minecraft.getInstance().execute {
             val buf = event.buf
             val readableBytes = buf.readableBytes()
@@ -129,14 +129,27 @@ class CustomPacketEvent(val buf: FriendlyByteBuf): Event()
         modlink.sendPacket(packet) { bytes ->
             Minecraft.getInstance().connection?.send(
                 ServerboundCustomPayloadPacket(
-                    channelName,
+                    ResourceLocation.tryBuild("modlink", "default"),
                     FriendlyByteBuf(Unpooled.wrappedBuffer(bytes))
                 )
             )
         }
     }
 ```
+### 关于其他版本
 
+已知在1.20.4时，使用上面的方法Mixin的类要换为`ClientCommonPacketListenerImpl`
+
+同时由于Forge在此版本又出现了[#5730](https://github.com/MinecraftForge/MinecraftForge/issues/5730)中的问题，需要在Bukkit端手动注册通道
+```kotlin
+    // 使用Taboolib
+    @SubscribeEvent
+    fun onPlayerJoin(event: PlayerJoinEvent) {
+        (event.player as CraftPlayer).addChannel("modlink:default")
+    }
+```
+
+之后便可正常通过`CustomPacketEvent`收到数据包的数据
 ## 注意事项
 
 在 Channel 没有注册前是不能发包给玩家的，通常表现在 Join 事件前后发包无效。下面是一个简单的解决办法：
