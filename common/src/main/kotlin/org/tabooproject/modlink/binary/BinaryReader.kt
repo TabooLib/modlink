@@ -1,7 +1,6 @@
 package org.tabooproject.modlink.binary
 
 import io.netty.buffer.ByteBuf
-import org.tabooproject.modlink.PacketAssembler
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
@@ -167,7 +166,11 @@ class BinaryReader(bytes: ByteArray) {
          * @param buffer 要读取的 ByteBuf。
          * @return 创建的 BinaryReader 实例。
          */
-        fun from(buffer: ByteBuf): BinaryReader = BinaryReader(buffer.array())
+        fun from(buffer: ByteBuf): BinaryReader {
+            val bytes = ByteArray(buffer.readableBytes())
+            buffer.getBytes(buffer.readerIndex(), bytes)
+            return BinaryReader(bytes)
+        }
 
         /**
          * 从字节数组创建一个 BinaryReader 实例。

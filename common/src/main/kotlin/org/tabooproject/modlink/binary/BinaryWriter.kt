@@ -22,7 +22,7 @@ class BinaryWriter {
      * @param str 要写入的字符串。
      */
     fun writeString(str: String) {
-        val bytes = str.toByteArray()
+        val bytes = str.encodeToByteArray()
         output.writeInt(bytes.size)
         output.write(bytes)
     }
