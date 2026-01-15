@@ -65,7 +65,7 @@ object BinarySerializer {
             SerializationType.FLOAT -> output.writeFloat(value as Float)
             SerializationType.DOUBLE -> output.writeDouble(value as Double)
             SerializationType.BOOLEAN -> output.writeBoolean(value as Boolean)
-            SerializationType.CHAR -> output.writeChar((value as Char).code)
+            SerializationType.CHAR -> output.writeChar((value as Char).toInt())
             SerializationType.STRING -> {
                 val str = value as String
                 output.writeInt(str.length)
@@ -138,7 +138,7 @@ object BinarySerializer {
             SerializationType.CHAR_ARRAY -> {
                 val array = value as CharArray
                 output.writeInt(array.size)
-                array.forEach { output.writeChar(it.code) }
+                array.forEach { output.writeChar(it.toInt()) }
             }
         }
     }

@@ -54,7 +54,8 @@ abstract class PacketHandler {
         val signature = reader.readInt()
         if (signature == Packet.SIGNATURE) {
             val packetId = reader.readInt()
-            val packet = when (val typeId = reader.readInt()) {
+            val typeId = reader.readInt()
+            val packet = when (typeId) {
                 0 -> PacketHeader(packetId, reader.readInt(), reader.readInt())
                 1 -> PacketBody(packetId, reader.readInt(), reader.readByteArray())
                 else -> error("Unknown packet type: $typeId")

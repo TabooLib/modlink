@@ -9,7 +9,7 @@ import org.tabooproject.modlink.binary.BinaryWriter
 /**
  * 表示一个 modlink 数据包
  */
-sealed class Packet(val packetId: Int) : BinarySerializable {
+abstract class Packet(val packetId: Int) : BinarySerializable {
 
     fun toByteArray(): ByteArray {
         val writer = BinaryWriter()

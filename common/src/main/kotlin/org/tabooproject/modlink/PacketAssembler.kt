@@ -27,6 +27,7 @@ class PacketAssembler {
                 assemblingPacket.header = packet
                 assemblingPacket.tryGetResult()
             }
+            else -> error("Unknown packet type: ${packet.javaClass}")
         }
         if (result != null) {
             assemblingPackets.remove(packet.packetId)

@@ -1,8 +1,5 @@
 repositories {
-    maven {
-        url = uri("http://sacredcraft.cn:8081/repository/releases")
-        isAllowInsecureProtocol = true
-    }
+    maven { url = uri("https://repo.tabooproject.org/repository/releases") }
 }
 
 dependencies {

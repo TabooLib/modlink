@@ -7,7 +7,7 @@ import kotlin.toString
 plugins {
     java
     `maven-publish`
-    id("org.jetbrains.kotlin.jvm") version "1.8.22" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.4.32" apply false
 }
 
 subprojects {
@@ -37,7 +37,9 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=all", "-Xextended-compiler-checks")
+            apiVersion = "1.2"
+            languageVersion = "1.2"
+            freeCompilerArgs = listOf("-Xjvm-default=all")
         }
     }
 
